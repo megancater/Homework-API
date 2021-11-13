@@ -3,6 +3,6 @@ rest framework
 npm
 react
 django
-bootstrap
-react-strap
+bootstrap@4.6.0
+reactstrap@8.9.0
 axios@0.21.1
