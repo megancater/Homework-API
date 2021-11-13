@@ -28,11 +28,9 @@ class App extends Component {
 
     renderAssignments = () => {
         const { viewCompleted } = this.state;
-        console.log(this.state.assignmentList);
         const newAssignments = this.state.assignmentList.filter(
             assignment => assignment.completed === viewCompleted
         );
-        console.log(newAssignments);
         return newAssignments.map(assignment => (
             <li
                 key={assignment.id}
@@ -43,7 +41,7 @@ class App extends Component {
                         }`}
                     title={assignment.description}
                 >
-                    {assignment.title}
+                    {assignment.name}
                 </span>
             </li>
         ));
