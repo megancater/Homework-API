@@ -41,7 +41,7 @@ class App extends Component {
                         }`}
                     title={assignment.description}
                 >
-                    {assignment.name}
+                    {assignment.name} | {assignment.description}
                 </span>
             </li>
         ));
