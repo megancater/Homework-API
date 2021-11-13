@@ -102,7 +102,7 @@ class App extends Component {
                     <div className="col-md-6 col-sm-10 mx-auto p-0">
                         <div className="card p-3">
                             <div className="">
-                                <button onClick={this.createItem} className="btn btn-success">Add Task</button>
+                                <button onClick={console.log("You clicked?")/*</div>this.createItem*/} className="btn btn-success">Add Task</button>
                             </div>
                             <ul className="list-group list-group-flush">
                                 {this.renderAssignments()}
