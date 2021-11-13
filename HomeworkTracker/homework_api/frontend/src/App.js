@@ -1,44 +1,69 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      viewCompleted: false,
+      activeAssignment: {
+        name: "",
+        due_date: "",
+        calss_name: "",
+        description: "",
+        completed: false
+      },
+      assignmentList: []
+    };
+  }
+
+  async componentDidMount() {
+    try {
+      const res = await fetch('http://localhost:8000/assignments/');
+      const assignmentList = await res.json();
+      this.setState({
+        assignmentList
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  renderAssignments = () => {
+    const { viewCompleted } = this.state;
+    const newAssignments = this.state.assignmentList.filter(
+      assignment => assignment.completed === viewCompleted
+    );
+    return newAssignments.map(assignment => (
+      <li
+        key={assignment.id}
+        className="list-group-assignment d-flex justify-content-between align-assignments-center"
+      >
+        <span
+          className={`todo-title mr-2 ${this.state.viewCompleted ? "completed-todo" : ""
+            }`}
+          title={assignment.description}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          {assignment.title}
+        </span>
+      </li>
+    ));
+  };
+
+  render() {
+    return (
+      <main className="content">
+        <div className="row">
+          <div className="col-md-6 col-sm-10 mx-auto p-0">
+            <div className="card p-3">
+              <ul className="list-group list-group-flush">
+                {this.renderAssignments()}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+  }
 }
 
 export default App;
-
-import React, { Component } from "react"
-
-class App exends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			viewCompleted: false,
-			activeAssignment: {
-				name: "",
-				due_date: "",
-				class_name: "",
-				description: "",
-				completed: false
-			},
-		}
-	}
-}
-
