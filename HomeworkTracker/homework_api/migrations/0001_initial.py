@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('due_date', models.DateField()),
                 ('class_name', models.CharField(max_length=50)),
                 ('description', models.TextField()),
-                ('status', models.BooleanField()),
+                ('completed', models.BooleanField()),
             ],
         ),
         migrations.CreateModel(
