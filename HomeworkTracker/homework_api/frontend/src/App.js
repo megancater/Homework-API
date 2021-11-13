@@ -35,7 +35,7 @@ class App extends Component {
         this.toggle();
         if (assignment.id) {
             axios
-                .put('http://localhost:8000/assignments/${assignment.id}/', assignment)
+                .put(`'http://localhost:8000/assignments/${assignment.id}/'`, assignment)
             return;
         }
         axios

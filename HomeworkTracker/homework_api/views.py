@@ -10,3 +10,18 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 class TimerViewSet(viewsets.ModelViewSet):
     queryset = Timer.objects.all()
     serializer_class = TimerSerializer
+
+
+
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class AssignmentList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'assignment_list.html'
+
+    def get(self, request):
+        queryset = Assignment.objects.all()
+        return Response({'assignments': queryset})
+
