@@ -8,7 +8,7 @@ class App extends Component {
       activeAssignment: {
         name: "",
         due_date: "",
-        calss_name: "",
+        class_name: "",
         description: "",
         completed: false
       },
@@ -19,6 +19,7 @@ class App extends Component {
   async componentDidMount() {
     try {
       const res = await fetch('http://localhost:8000/assignments/');
+      console.log(res);
       const assignmentList = await res.json();
       this.setState({
         assignmentList
@@ -31,9 +32,9 @@ class App extends Component {
 
   renderAssignments = () => {
     const { viewCompleted } = this.state;
-    const newAssignments = this.state.assignmentList //.filter(
-    //assignment => assignment.completed === viewCompleted
-    //);
+    const newAssignments = this.state.assignmentList.filter(
+      assignment => assignment.completed === viewCompleted
+    );
     return newAssignments.map(assignment => (
       <li
         key={assignment.id}
