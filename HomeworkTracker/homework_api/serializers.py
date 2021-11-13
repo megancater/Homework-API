@@ -4,7 +4,7 @@ from rest_framework import serializers
 class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Assignment
-        fields = ['id', 'name', 'due_date', 'class_name', 'description', 'status']
+        fields = ['id', 'name', 'due_date', 'class_name', 'description', 'completed']
 
 class TimerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
