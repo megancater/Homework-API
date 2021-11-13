@@ -5,3 +5,4 @@ react
 django
 bootstrap
 react-strap
+axios@0.21.1
