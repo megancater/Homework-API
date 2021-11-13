@@ -1,0 +1,7 @@
+cors headers
+rest framework
+npm
+react
+django
+bootstrap
+react-strap
