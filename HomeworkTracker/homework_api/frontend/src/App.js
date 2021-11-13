@@ -6,6 +6,7 @@ class App extends Component {
         this.state = {
             viewCompleted: false,
             activeAssignment: {
+				id: "",
                 name: "",
                 due_date: "",
                 class_name: "",
@@ -17,16 +18,12 @@ class App extends Component {
     }
 
     async componentDidMount() {
-        try {
-            const res = await fetch('http://localhost:8000/assignments/');
-            const assignmentList = await res.json();
-            console.log(assignmentList);
-            this.setState({
-                assignmentList
-            });
-        } catch (e) {
-            console.log(e);
-        }
+       fetch('http://localhost:8000/assignments/')
+		.then(res => res.json())
+			.then((data) => {
+				this.setState({ assignmentList: data })
+			})
+		.catch(console.log);
     }
 
     renderAssignments = () => {
