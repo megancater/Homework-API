@@ -23,6 +23,7 @@ class App extends Component {
       this.setState({
         assignmentList
       });
+      console.log(assignmentList);
     } catch (e) {
       console.log(e);
     }
@@ -30,9 +31,9 @@ class App extends Component {
 
   renderAssignments = () => {
     const { viewCompleted } = this.state;
-    const newAssignments = this.state.assignmentList.filter(
-      assignment => assignment.completed === viewCompleted
-    );
+    const newAssignments = this.state.assignmentList //.filter(
+    //assignment => assignment.completed === viewCompleted
+    //);
     return newAssignments.map(assignment => (
       <li
         key={assignment.id}
