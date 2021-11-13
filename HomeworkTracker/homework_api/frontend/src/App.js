@@ -1,71 +1,54 @@
 import React, { Component } from "react"
 
+const todoItems = [
+    {
+        id: 1,
+        title: "Nature walk in the park",
+        description: "Visit the park with my friends",
+        completed: true
+    },
+
+    {
+        id: 2,
+        title: "Visit",
+        description: "Got to my aunt's place",
+        completed: true
+    },
+
+    {
+        id: 3,
+        title: "Write",
+        description: "Do an article about anthropology",
+        completed: true
+    },
+];
+
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewCompleted: false,
-      activeAssignment: {
-        name: "",
-        due_date: "",
-        class_name: "",
-        description: "",
-        completed: false
-      },
-      assignmentList: []
+    constructor(props) {
+        super(props);
+        this.state = { todoItems };
     };
-  }
 
-  async componentDidMount() {
-    try {
-      const res = await fetch('http://localhost:8000/assignments/');
-      console.log(res);
-      const assignmentList = await res.json();
-      this.setState({
-        assignmentList
-      });
-      console.log(assignmentList);
-    } catch (e) {
-      console.log(e);
+    render() {
+        return (
+            <main className="content">
+                <div className="row">
+                    <div className="col-md-6 col-sm-10 mx-auto p-0">
+                        <div className="card p-3">
+                            <ul className="list-group list-group-flush">
+                                {this.state.todoItems.map(item => (
+                                    <div>
+                                        <h1>{item.title}</h1>
+                                        <span>{item.description}</span>
+                                    </div>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        )
     }
-  }
-
-  renderAssignments = () => {
-    const { viewCompleted } = this.state;
-    const newAssignments = this.state.assignmentList.filter(
-      assignment => assignment.completed === viewCompleted
-    );
-    return newAssignments.map(assignment => (
-      <li
-        key={assignment.id}
-        className="list-group-assignment d-flex justify-content-between align-assignments-center"
-      >
-        <span
-          className={`todo-title mr-2 ${this.state.viewCompleted ? "completed-todo" : ""
-            }`}
-          title={assignment.description}
-        >
-          {assignment.title}
-        </span>
-      </li>
-    ));
-  };
-
-  render() {
-    return (
-      <main className="content">
-        <div className="row">
-          <div className="col-md-6 col-sm-10 mx-auto p-0">
-            <div className="card p-3">
-              <ul className="list-group list-group-flush">
-                {this.renderAssignments()}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </main>
-    )
-  }
 }
 
 export default App;
