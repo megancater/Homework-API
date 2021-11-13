@@ -18,13 +18,11 @@ class App extends Component {
 
   async componentDidMount() {
     try {
-      const res = await fetch('http://localhost:8000/assignments/');
-      console.log(res);
+      const res = await fetch('http://localhost:8000/assignments/').then(results => results.json()).then(data => console.log(data));
       const assignmentList = await res.json();
       this.setState({
         assignmentList
       });
-      console.log(assignmentList);
     } catch (e) {
       console.log(e);
     }
