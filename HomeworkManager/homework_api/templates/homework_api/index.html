@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>List all Assignments</title>
+	</head>
+	<body>
+		<h1>HEADER</h1>
+	{% if assignment_list %}
+		<ul>
+		{% for assignment in assignment_list %}
+		<li>
+			<a href="/assignments/{{ assignment.id  }}/">
+				{{ assignment.name  }}
+			</a>
+			</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+			<p>No assignments are available.</p>
+	{% endif %}
+	</body>
+</html>
+
+
