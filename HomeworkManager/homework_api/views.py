@@ -15,8 +15,18 @@ class AssignmentDetailView(ListView):
     model = Assignment
     template_name = 'homework_api/index.html'
 
-def edit(request, assignment_id):
-    assignment = get_object_or_404(Assignment, pk=assignment_id)
+def updateAssignment(request, id):
+    context = {}
+    obj = get_object_or_404(Assignment, id = id)
+    form = AssignmentForm(request.POST or None, instance = obj)
+
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect("/")
+
+    context['form'] = form
+    return render(request, 'updateAssignment.html', context)
+
 
 def deleteAssignment(request, id):
     context = {}

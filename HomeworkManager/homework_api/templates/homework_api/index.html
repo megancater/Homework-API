@@ -22,7 +22,7 @@
 				{% for assignment in assignment_list %}
 					<li>
 						{{ assignment.name  }} 
-						<button class='btn btn-primary btn-sm'>Edit</button>
+						<button class='btn btn-primary btn-sm' onclick="location.href='{{assignment.id}}/update'">Edit</button>
 						<button class='btn btn-danger btn-sm' onclick="location.href='{{assignment.id}}/delete'">Delete</button>
 						<br></br>
 					</li>
