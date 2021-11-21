@@ -6,9 +6,7 @@
 <body>
     <div>
 		<div class="main">
-			<!-- Create a Form -->
 			<form method="POST">
-				<!-- Security token by Django -->
 				{% csrf_token %}
 				Delete?
 				<input type="submit" value="Yes" />
@@ -18,3 +16,5 @@
     </div>
 </body>
 </html>
+
+<!-- referenced from https://www.geeksforgeeks.org/delete-view-function-based-views-django/ -->
