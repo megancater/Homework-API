@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from .models import Assignment, Timer
+from .forms import AssignmentForm
 
 class IndexView(ListView):
     template_name = 'homework_api/index.html'
@@ -24,4 +25,15 @@ def deleteAssignment(request, id):
         assignment.delete()
         return HttpResponseRedirect("/")
     return render(request, "deleteAssignment.html", context)
+
+def createAssignment(request):
+    context = {}
+
+    form = AssignmentForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+
+    context['form'] = form
+    return render(request, "createAssignment.html", context)
+
 
