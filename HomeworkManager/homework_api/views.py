@@ -14,6 +14,14 @@ class AssignmentDetailView(ListView):
     model = Assignment
     template_name = 'homework_api/index.html'
 
-def complete(request, assignment_id):
+def edit(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
+
+def deleteAssignment(request, id):
+    context = {}
+    assignment = get_object_or_404(Assignment, id=id)
+    if request.method == "POST":
+        assignment.delete()
+        return HttpResponseRedirect("/")
+    return render(request, "deleteAssignment.html", context)
 
