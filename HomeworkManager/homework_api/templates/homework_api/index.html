@@ -13,7 +13,7 @@
 		</div>
 		<div class='container'>
 			<div>
-				<button class='btn btn-info'>Add Assignment</button>
+				<button class='btn btn-info' onclick="location.href='/create'">Add Assignment</button>
 				<br></br>
 			</div>
 		<div>
@@ -23,7 +23,7 @@
 					<li>
 						{{ assignment.name  }} 
 						<button class='btn btn-primary btn-sm'>Edit</button>
-						<button class='btn btn-danger btn-sm'>Delete</button>
+						<button class='btn btn-danger btn-sm' onclick="location.href='{{assignment.id}}/delete'">Delete</button>
 						<br></br>
 					</li>
 					{% endfor %}

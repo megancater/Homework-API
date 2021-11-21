@@ -32,6 +32,7 @@ def createAssignment(request):
     form = AssignmentForm(request.POST or None)
     if form.is_valid():
         form.save()
+        return HttpResponseRedirect("/")
 
     context['form'] = form
     return render(request, "createAssignment.html", context)
