@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
-		<title>List all Assignments</title>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <title>Homework Manager</title>
+	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">	 
 	</head>
 	<body>
-		<h1>HEADER</h1>
-	{% if assignment_list %}
-		<ul>
-		{% for assignment in assignment_list %}
-		<li>
-			<a href="/assignments/{{ assignment.id  }}/">
-				{{ assignment.name  }}
-			</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% else %}
-			<p>No assignments are available.</p>
-	{% endif %}
+		<div class='text-center'>
+			<h1>Homework Assignments</h1>
+		</div>
+		<div class='container'>
+			<div>
+				<button class='btn btn-info'>Add Assignment</button>
+				<br></br>
+			</div>
+		<div>
+			{% if assignment_list %}
+				<ul>
+				{% for assignment in assignment_list %}
+					<li>
+						{{ assignment.name  }} 
+						<button class='btn btn-primary btn-sm'>Edit</button>
+						<button class='btn btn-danger btn-sm'>Delete</button>
+						<br></br>
+					</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+					<p>No assignments are available.</p>
+			{% endif %}
+			</div>
+		</div>
 	</body>
 </html>
 
