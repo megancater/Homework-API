@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from .models import Assignment, Timer
-from .forms import AssignmentForm
+from .forms import AssignmentForm, TimerForm
 
 class IndexView(ListView):
     template_name = 'homework_api/index.html'
@@ -46,5 +46,4 @@ def createAssignment(request):
 
     context['form'] = form
     return render(request, "createAssignment.html", context)
-
 

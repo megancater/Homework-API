@@ -18,16 +18,21 @@
 			</div>
 		<div>
 			{% if assignment_list %}
-				<ul>
+				<ol>
 				{% for assignment in assignment_list %}
 					<li>
-						{{ assignment.name  }} 
+						{{ assignment.name  }}
 						<button class='btn btn-primary btn-sm' onclick="location.href='{{assignment.id}}/update'">Edit</button>
 						<button class='btn btn-danger btn-sm' onclick="location.href='{{assignment.id}}/delete'">Delete</button>
-						<br></br>
-					</li>
+						<button class='btn btn-success btn-sm' onclick="location.href='{{assignment.id}}/timer'">Timer</button>
+						<ul>
+							<li> Class: {{ assignment.class_name }}
+							<li> Description: {{ assignment.description }}
+							<li> Due Date: {{ assignment.due_date }}
+							<li> Completed: {{ assignment.completed }}
+						</ul>
 					{% endfor %}
-				</ul>
+				</ol>
 				{% else %}
 					<p>No assignments are available.</p>
 			{% endif %}

@@ -12,5 +12,5 @@ class Assignment(models.Model):
 
 class Timer(models.Model):
     assignment = models.ForeignKey('Assignment', on_delete=models.CASCADE)
-    begin = models.TimeField()
-    end = models.TimeField()
+    begin = models.TimeField(auto_now_add=True)
+    end = models.TimeField(auto_now=True)

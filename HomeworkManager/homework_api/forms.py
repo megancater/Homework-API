@@ -1,5 +1,5 @@
 from django import forms
-from .models import Assignment
+from .models import Assignment, Timer
 
 class AssignmentForm(forms.ModelForm):
     class Meta:
@@ -10,4 +10,10 @@ class AssignmentForm(forms.ModelForm):
             'class_name',
             'description',
             'completed'
+        ]
+class TimerForm(forms.ModelForm):
+    class Meta:
+        model = Timer
+        fields = [
+            'assignment',
         ]
