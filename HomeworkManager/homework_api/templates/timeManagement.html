@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Time Management Dashboard</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+</head>
+
+<body>
+	<div class='text-center'>
+		<h1>Time Management Dashboard</h1>
+	</div>
+	<div class='container'>
+		<p>Choose a date</p>
+		<p> {{assignments.timers.today }} </p>
+	</div>
+	<div class='container'>
+		<div>
+			{% if assignment_list %}
+			<ol>
+				{% for assignment in assignment_list %}
+				<li>
+					{{ assignment.name }}
+					<ul>
+						{% if assignment.timers.all %}
+							{% for timer in assignment.timers.all %}
+
+							<li> Timer {{ forloop.counter }}: {{ timer.begin|date:'F'}} {{ timer.begin|date:'W' }}
+								<li> Week: 
+								<li> Month: 
+							{% empty %}
+							{% endfor %}
+						{% else %}
+							<p>No times are available.</p>
+						{% endif %}
+					</ul>
+					{% endfor %}
+			</ol>
+			{% else %}
+				<p>No assignments are available.</p>
+			{% endif %}
+		</div>
+	</div>
+</body>
+
+</html>

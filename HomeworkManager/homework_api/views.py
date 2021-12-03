@@ -80,3 +80,12 @@ def deleteTimer(request, assignment_id, id):
         return HttpResponseRedirect('/')
 
     return render(request, 'deleteTimer.html', context)
+
+class timeManagement(ListView):
+    template_name = 'timeManagement.html'
+    context_object_name = 'assignment_list'
+
+    def get_queryset(self):
+        return Assignment.objects.order_by('due_date')
+
+
