@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Delete Assignment</title>
+</head>
+
+<body>
+	<div>
+		<div class="main">
+			<form method="POST">
+				{% csrf_token %}
+				Delete?
+				<input type="submit" value="Yes" name="delete_timer" />
+				<a href="/">No </a>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
+
+<!-- referenced from https://www.geeksforgeeks.org/delete-view-function-based-views-django/ -->

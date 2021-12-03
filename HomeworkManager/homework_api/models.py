@@ -1,4 +1,7 @@
 from django.db import models
+from django.utils import timezone
+from datetime import datetime
+
 
 class Assignment(models.Model):
     name = models.CharField(max_length=50)
@@ -10,7 +13,15 @@ class Assignment(models.Model):
     def __str__(self):
         return self.id
 
+
 class Timer(models.Model):
-    assignment = models.ForeignKey('Assignment', on_delete=models.CASCADE)
-    begin = models.TimeField(auto_now_add=True)
-    end = models.TimeField(auto_now=True)
+    assignment = models.ForeignKey(
+        'Assignment', on_delete=models.CASCADE, related_name='timers')
+    begin = models.DateTimeField()
+    end = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.begin:
+            self.begin = timezone.now()
+        self.end = timezone.now()
+        return super(Timer, self).save(*args, **kwargs)

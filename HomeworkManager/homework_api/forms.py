@@ -1,6 +1,7 @@
 from django import forms
 from .models import Assignment, Timer
 
+
 class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
@@ -11,6 +12,8 @@ class AssignmentForm(forms.ModelForm):
             'description',
             'completed'
         ]
+
+
 class TimerForm(forms.ModelForm):
     class Meta:
         model = Timer

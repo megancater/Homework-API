@@ -1,44 +1,59 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <title>Homework Manager</title>
-	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">	 
-	</head>
-	<body>
-		<div class='text-center'>
-			<h1>Homework Assignments</h1>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Homework Manager</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+</head>
+
+<body>
+	<div class='text-center'>
+		<h1>Homework Assignments</h1>
+	</div>
+	<div class='container'>
+		<div>
+			<button class='btn btn-info' onclick="location.href='/create'">Add Assignment</button>
+			<br></br>
 		</div>
-		<div class='container'>
-			<div>
-				<button class='btn btn-info' onclick="location.href='/create'">Add Assignment</button>
-				<br></br>
-			</div>
 		<div>
 			{% if assignment_list %}
-				<ol>
+			<ol>
 				{% for assignment in assignment_list %}
-					<li>
-						{{ assignment.name  }}
-						<button class='btn btn-primary btn-sm' onclick="location.href='{{assignment.id}}/update'">Edit</button>
-						<button class='btn btn-danger btn-sm' onclick="location.href='{{assignment.id}}/delete'">Delete</button>
-						<button class='btn btn-success btn-sm' onclick="location.href='{{assignment.id}}/timer'">Timer</button>
-						<ul>
-							<li> Class: {{ assignment.class_name }}
-							<li> Description: {{ assignment.description }}
-							<li> Due Date: {{ assignment.due_date }}
-							<li> Completed: {{ assignment.completed }}
-						</ul>
+				<li>
+					{{ assignment.name }}
+					<button class='btn btn-primary btn-sm'
+						onclick="location.href='{{assignment.id}}/update'">Edit</button>
+					<button class='btn btn-danger btn-sm'
+						onclick="location.href='{{assignment.id}}/delete'">Delete</button>
+					<button class='btn btn-success btn-sm'
+						onclick="location.href='{{assignment.id}}/timer'">Timer</button>
+					<ul>
+						<li> Class: {{ assignment.class_name }}
+						<li> Description: {{ assignment.description }}
+						<li> Due Date: {{ assignment.due_date }}
+						<li> Completed: {{ assignment.completed }}
+							{% if assignment.timers.all %}
+							<ul>
+								{% for timer in assignment.timers.all %}
+								<li> Timer {{ forloop.counter }}: {{ timer.begin}} - {{timer.end }}
+									<button class='btn btn-danger btn-sm py-0' style='font-size: 0.8em;'
+										onclick="location.href='{{assignment.id}}/timer/{{timer.id}}'">Delete</button>
+									{% empty %}
+									{% endfor %}
+							</ul>
+							{% endif %}
+					</ul>
 					{% endfor %}
-				</ol>
-				{% else %}
-					<p>No assignments are available.</p>
+			</ol>
+			{% else %}
+			<p>No assignments are available.</p>
 			{% endif %}
-			</div>
 		</div>
-	</body>
+	</div>
+</body>
+
 </html>
-
-
