@@ -8,6 +8,17 @@
 	<title>Time Management Dashboard</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    
+    <script type="text/JavaScript">
+        function showMonth(){
+            var month = document.getElementById("month").value;
+            display_month.innerHTML= month;
+        }
+        function showWeek(){
+            var week = document.getElementById("week").value;
+            display_week.innerHTML= week;
+        }
+    </script>
 </head>
 
 <body>
@@ -15,7 +26,15 @@
 		<h1>Time Management Dashboard</h1>
 	</div>
 	<div class='container'>
-		<p>Choose a date</p>
+		<p>Enter a month or week</p>
+        <form>
+            Month: <input type="text" id = "month">
+            <input type="button" onclick="showMonth()" value="submit" />
+        </form>
+        <form>
+            Week: <input type="text" id = "week">
+            <input type="button" onclick="showWeek()" value="submit" />
+        </form>
 		<p> {{assignments.timers.today }} </p>
 	</div>
 	<div class='container'>
