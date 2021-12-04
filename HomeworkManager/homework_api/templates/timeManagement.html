@@ -13,12 +13,72 @@
         function showMonth(){
             var month = document.getElementById("month").value;
             display_month.innerHTML= month;
+			updateDiv();
         }
         function showWeek(){
             var week = document.getElementById("week").value;
             display_week.innerHTML= week;
+			updateDiv();
         }
-        /*function defaultMonth(){
+		function currentMonth() {
+			var cur_date = new Date();
+			var month = cur_date.getMonth();
+			switch(month){
+				case 0: return "January";
+				case 1: return "February";
+				case 2: return "March";
+				case 3: return "April";
+				case 4: return "May";
+				case 5: return "June";
+				case 6: return "July";
+				case 7: return "August";
+				case 8: return "September";
+				case 9: return "October";
+				case 10: return "November";
+				case 11: return  "December";
+			}
+			return month;
+		}
+		function currentWeek() {
+			var today = new Date().getWeekNumber();
+			return today;
+		}
+		function findTimeDifference(h1,m1,a1,d1,h2,m2,a2,d2) {
+			daysInMins = 0;
+			// check hours
+			if (a1 == "p.m.") {
+				a1 = a1 + 12;
+			}
+			if (a2 == "p.m.") {
+				a2 = a2 + 12;
+			}
+
+			// check days
+			if (d1 != d2) {
+				daysDiff = d2 - d1
+				daysInMins = 24*60*daysDiff;
+			}
+
+			// calculate minutes
+			hoursInMins = 60*(h2-h1);
+			mins = m2 - m1;
+			return hoursInMins + mins + daysInMins;
+		}
+		Date.prototype.getWeekNumber = function(){
+			var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+			var dayNum = d.getUTCDay() || 7;
+			d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+			var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+			return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+			// referenced from https://stackoverflow.com/questions/6117814/get-week-of-year-in-javascript-like-in-php
+		};
+		function updateDiv(){
+			$( "#tasks" ).load(window.location.href + " #tasks");
+		}
+
+
+
+		/*function defaultMonth(){
             document.write("work!!");
             display_month.innerHTML= 'December';
         }*/
@@ -39,29 +99,30 @@
             Week: <input type="text" id = "week">
             <input type="button" onclick="showWeek()" value="submit" />
         </form>
-		<p> {{assignments.timers.today }} </p>
 	</div>
-	<div class='container' id="defaultMonth">
+	<div class='container' id="displayMonth">
+        <p> Month is: <span id = "display_month"></span> </p>
+        <p> Week is: <span id = "display_week"></span> </p>
         <script>
             var month = '';
             var week = '';
             if (document.getElementById("month").value === '') {
-                month = 'December';
+				month = currentMonth();
+            	document.getElementById("display_month").innerHTML = month;
             }
             else {
                 month = document.getElementById("month").value;
             }
             
             if (document.getElementById("week").value === '') {
-                week = 48;
+                week = currentWeek();
+				document.getElementById("display_week").innerHTML = week;
             }
             else {
                 week = document.getElementById("week").value;
             }
         </script>
-        <p> Month is: <span id = "display_month"></span> </p>
-        <p> Week is: <span id = "display_week"></span> </p>
-		<div>
+		<div id='tasks'>
 			{% if assignment_list %}
             <ol>
 				{% for assignment in assignment_list %}
@@ -69,12 +130,49 @@
 					{{ assignment.name }}
 					<ul>
 						{% if assignment.timers.all %}
+						<li> Week: 
+							<script>
+								var taskTimes = [];
+								var taskMonthTimes = [];
+							</script>
 							{% for timer in assignment.timers.all %}
-							<li> Timer {{ forloop.counter }}: {{ timer.begin|date:'F'}} {{ timer.begin|date:'W' }}
-								<li> Week: 
-								<li> Month: 
+							<script>
+								if ("{{timer.begin|date:'W'}}" == document.getElementById("display_week").innerHTML) {
+									let beginH = "{{timer.begin|date:'g'}}";
+									let beginM = "{{timer.begin|date:'i'}}";
+									let beginA = "{{timer.begin|date:'a'}}";
+									let beginD = "{{timer.begin|date:'d'}}";
+									let endH = "{{timer.end|date:'g'}}";
+									let endM = "{{timer.end|date:'i'}}";
+									let endA = "{{timer.end|date:'a'}}";
+									let endD = "{{timer.end|date:'d'}}";
+									let timeDif = findTimeDifference(beginH, beginM, beginA, beginD, endH, endM, endA, endD);
+									taskTimes.push(timeDif);
+								}
+								if ("{{timer.begin|date:'F'}}" == document.getElementById("display_month").innerHTML) {
+									let beginH = "{{timer.begin|date:'g'}}";
+									let beginM = "{{timer.begin|date:'i'}}";
+									let beginA = "{{timer.begin|date:'a'}}";
+									let beginD = "{{timer.begin|date:'d'}}";
+									let endH = "{{timer.end|date:'g'}}";
+									let endM = "{{timer.end|date:'i'}}";
+									let endA = "{{timer.end|date:'a'}}";
+									let endD = "{{timer.end|date:'d'}}";
+									let timeDif = findTimeDifference(beginH, beginM, beginA, beginD, endH, endM, endA, endD);
+									taskMonthTimes.push(timeDif);
+								}
+							</script>
 							{% empty %}
 							{% endfor %}
+							<script>
+								var weekTime = taskTimes.reduce((x,a) => x+a,0);
+								document.write(weekTime, " mins");
+							</script></li>
+						<li> Month:
+							<script>
+								var monthTime = taskMonthTimes.reduce((a,b) => a+b, 0);
+								document.write(monthTime, " mins");
+							</script></li>
 						{% else %}
 							<p>No times are available.</p>
 						{% endif %}
