@@ -13,18 +13,12 @@
         function showMonth(){
             var month = document.getElementById("month").value;
             display_month.innerHTML= month;
-            //var = tabelaContent; 
-
-            //tabelaContent = document.getElementById("display_month").innerHTML;
-            localStorage.setItem("month_data",display_month.innerHTML);
-			updateDiv();
         }
         function showWeek(){
             var week = document.getElementById("week").value;
             display_week.innerHTML= week;
-			updateDiv();
         }
-        function currentMonth() {
+		function currentMonth() {
 			var cur_date = new Date();
 			var month = cur_date.getMonth();
 			switch(month){
@@ -76,9 +70,6 @@
 			return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
 			// referenced from https://stackoverflow.com/questions/6117814/get-week-of-year-in-javascript-like-in-php
 		};
-		function updateDiv(){
-			$( "#tasks" ).load(window.location.href + " #tasks");
-		}
     </script>
 </head>
 
@@ -88,21 +79,14 @@
 	</div>
 	<div class='container'>
 		<p>Enter a month or week</p>
-        <form action="/timeManagement2.html" method="get" target="_blank">
-          <label for="month">Month:</label>
-          <input type="text" id="month" name="month"><br><br>
-          <label for="week">Week:</label>
-          <input type="text" id="week" name="week"><br><br>
-          <input type="submit" value="Submit">
-        </form>
-        <!--<form>
+        <form>
             Month: <input type="text" id = "month">
             <input type="button" onclick="showMonth()" value="submit" />
         </form>
         <form>
             Week: <input type="text" id = "week">
             <input type="button" onclick="showWeek()" value="submit" />
-        </form>-->
+        </form>
 	</div>
 	<div class='container' id="displayMonth">
         <p> Month is: <span id = "display_month"></span> </p>
@@ -110,9 +94,6 @@
         <script>
             var month = '';
             var week = '';
-            
-            document.getElementById("month").innerHTML = localStorage.getItem("month_data");
-            
             if (document.getElementById("month").value === '') {
 				month = currentMonth();
             	document.getElementById("display_month").innerHTML = month;
@@ -130,6 +111,7 @@
             }
         </script>
 		<div id='tasks'>
+			<h3>Tasks</h3>
 			{% if assignment_list %}
             <ol>
 				{% for assignment in assignment_list %}
@@ -144,6 +126,7 @@
 							</script>
 							{% for timer in assignment.timers.all %}
 							<script>
+								// find the time difference for the week
 								if ("{{timer.begin|date:'W'}}" == document.getElementById("display_week").innerHTML) {
 									let beginH = "{{timer.begin|date:'g'}}";
 									let beginM = "{{timer.begin|date:'i'}}";
@@ -156,6 +139,8 @@
 									let timeDif = findTimeDifference(beginH, beginM, beginA, beginD, endH, endM, endA, endD);
 									taskTimes.push(timeDif);
 								}
+
+								// find the time difference for the month
 								if ("{{timer.begin|date:'F'}}" == document.getElementById("display_month").innerHTML) {
 									let beginH = "{{timer.begin|date:'g'}}";
 									let beginM = "{{timer.begin|date:'i'}}";
@@ -172,23 +157,113 @@
 							{% empty %}
 							{% endfor %}
 							<script>
-                                document.write(month, " ", week);
+								// sum all the times to get total week
 								var weekTime = taskTimes.reduce((x,a) => x+a,0);
 								document.write(weekTime, " mins");
 							</script></li>
 						<li> Month:
 							<script>
+								// sum all the times to get total month
 								var monthTime = taskMonthTimes.reduce((a,b) => a+b, 0);
 								document.write(monthTime, " mins");
 							</script></li>
 						{% else %}
-							<p>No times are available.</p>
+							<li>No times are available</li>
 						{% endif %}
 					</ul>
 					{% endfor %}
 			</ol>
 			{% else %}
 				<p>No assignments are available.</p>
+			{% endif %}
+		</div>
+		<div id='projects'>
+			<h3>Projects</h3>
+			{% if assignment_list %}
+				<script>
+					var weekDict = {};
+					var monthDict = {};
+				</script>
+				{% for assignment in assignment_list %}
+						{% if assignment.timers.all %}
+							<script>
+								var holderTimes = [];
+								var holderMonthTimes = [];
+							</script>
+							{% for timer in assignment.timers.all %}
+							<script>
+								// find the time difference for the week for each timer
+								if ("{{timer.begin|date:'W'}}" == document.getElementById("display_week").innerHTML) {
+									let beginH = "{{timer.begin|date:'g'}}";
+									let beginM = "{{timer.begin|date:'i'}}";
+									let beginA = "{{timer.begin|date:'a'}}";
+									let beginD = "{{timer.begin|date:'d'}}";
+									let endH = "{{timer.end|date:'g'}}";
+									let endM = "{{timer.end|date:'i'}}";
+									let endA = "{{timer.end|date:'a'}}";
+									let endD = "{{timer.end|date:'d'}}";
+									let timeDif = findTimeDifference(beginH, beginM, beginA, beginD, endH, endM, endA, endD);
+									holderTimes.push(timeDif);
+								}
+								// find the time difference for the month for each timer
+								if ("{{timer.begin|date:'F'}}" == document.getElementById("display_month").innerHTML) {
+									let beginH = "{{timer.begin|date:'g'}}";
+									let beginM = "{{timer.begin|date:'i'}}";
+									let beginA = "{{timer.begin|date:'a'}}";
+									let beginD = "{{timer.begin|date:'d'}}";
+									let endH = "{{timer.end|date:'g'}}";
+									let endM = "{{timer.end|date:'i'}}";
+									let endA = "{{timer.end|date:'a'}}";
+									let endD = "{{timer.end|date:'d'}}";
+									let timeDif = findTimeDifference(beginH, beginM, beginA, beginD, endH, endM, endA, endD);
+									holderMonthTimes.push(timeDif);
+								}
+							</script>
+							{% endfor %}
+							<script>
+								// calculate the total time
+								var weekTime = holderTimes.reduce((x,a) => x+a,0);
+								var monthTime = holderMonthTimes.reduce((a,b) => a+b, 0);
+		
+								// get the project name and check if it already exists
+								var assignmentProjectName = "{{assignment.class_name}}";
+								if (!(weekDict.hasOwnProperty(assignmentProjectName))) {
+									weekDict[assignmentProjectName] = 0;
+								}
+								if (!(monthDict.hasOwnProperty(assignmentProjectName))) {
+									monthDict[assignmentProjectName] = 0;
+								}
+		
+								// sum the total time
+								weekDict[assignmentProjectName] += weekTime;
+								monthDict[assignmentProjectName] += monthTime;
+							</script>
+						{% endif %}
+					{% endfor %}
+					<h5>Time spent for the week:</h5>
+					<ul id='projectFinalTimes'></ul>
+					<h5>Time spent for the month:</h5>
+					<ul id='projectMonthFinalTimes'></ul>
+					<script>
+					// write the project week values
+					let list = document.getElementById("projectFinalTimes");
+					for (var key of Object.keys(weekDict)) {
+						let bullet = document.createElement("li");
+						bullet.innerText = key + ": " + weekDict[key] + " mins";
+						list.appendChild(bullet);
+					}
+
+					// write the project month values
+					let list2 = document.getElementById("projectMonthFinalTimes");
+					for (var key of Object.keys(monthDict)) {
+						let bullet = document.createElement("li");
+						bullet.innerText = key + ": " + monthDict[key] + " mins";
+						list2.appendChild(bullet);
+					}	
+					
+				</script>
+			{% else %}
+				<p>No projects are available.</p>
 			{% endif %}
 		</div>
 	</div>
