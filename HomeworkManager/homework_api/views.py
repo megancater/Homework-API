@@ -94,3 +94,10 @@ class timeManagement2(ListView):
 
     def get_queryset(self):
         return Assignment.objects.order_by('due_date')
+
+class averageManagement(ListView):
+    template_name = 'averageManagement.html'
+    context_object_name = 'assignment_list'
+
+    def get_queryset(self):
+        return Assignment.objects.order_by('due_date')
