@@ -88,21 +88,14 @@
 	</div>
 	<div class='container'>
 		<p>Enter a month or week</p>
-        <form action="/timeManagement2.html" method="get" target="_blank">
-          <label for="month">Month:</label>
-          <input type="text" id="month" name="month"><br><br>
-          <label for="week">Week:</label>
-          <input type="text" id="week" name="week"><br><br>
-          <input type="submit" value="Submit">
-        </form>
-        <!--<form>
+        <form>
             Month: <input type="text" id = "month">
             <input type="button" onclick="showMonth()" value="submit" />
         </form>
         <form>
             Week: <input type="text" id = "week">
             <input type="button" onclick="showWeek()" value="submit" />
-        </form>-->
+        </form>
 	</div>
 	<div class='container' id="displayMonth">
         <p> Month is: <span id = "display_month"></span> </p>
@@ -111,7 +104,12 @@
             var month = '';
             var week = '';
             
-            document.getElementById("month").innerHTML = localStorage.getItem("month_data");
+            window.$_GET = location.search.substr(1).split("&").reduce((o,i)=>(u=decodeURIComponent,[k,v]=i.split("="),o[u(k)]=v&&u(v),o),{});
+            
+            month=$_GET["month"];
+            week=$_GET["week"];
+            
+            /*document.getElementById("month").innerHTML = localStorage.getItem("month_data");
             
             if (document.getElementById("month").value === '') {
 				month = currentMonth();
@@ -127,7 +125,7 @@
             }
             else {
                 week = document.getElementById("week").value;
-            }
+            }*/
         </script>
 		<div id='tasks'>
 			{% if assignment_list %}
