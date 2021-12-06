@@ -27,7 +27,7 @@ class Timer(models.Model):
         return super().clean()
 
     def save(self, *args, **kwargs):
-        if isForm:
+        if self == "TimerForm":
             return super(Timer, self).save(*args, **kwargs)
 
         if not self.begin:
