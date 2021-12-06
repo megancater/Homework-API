@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from datetime import datetime
 
 
@@ -11,7 +12,7 @@ class Assignment(models.Model):
     completed = models.BooleanField()
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Timer(models.Model):
@@ -20,8 +21,22 @@ class Timer(models.Model):
     begin = models.DateTimeField()
     end = models.DateTimeField()
 
+    def clean(self):
+        if self.begin > self.end:
+            raise ValidationError('Begin should be before end')
+        return super().clean()
+
     def save(self, *args, **kwargs):
+        if isForm:
+            return super(Timer, self).save(*args, **kwargs)
+
         if not self.begin:
             self.begin = timezone.now()
         self.end = timezone.now()
         return super(Timer, self).save(*args, **kwargs)
+
+    def edit(self, *args, **kwargs):
+        return super(Timer, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.id)

@@ -63,8 +63,9 @@ def timeAssignment(request, assignment_id):
             timer.save()
             return render(request, 'timeAssignment.html', context)
         if 'stop_timer' in request.POST:
-            timerList = assignment.timers.all().reverse()
-            timerList[0].save()
+            timerList = assignment.timers.all()
+            print(timerList)
+            timerList[len(timerList)-1].save()
             return HttpResponseRedirect('/')
 
     return render(request, 'timeAssignment.html', context)
@@ -81,6 +82,22 @@ def deleteTimer(request, assignment_id, id):
 
     return render(request, 'deleteTimer.html', context)
 
+
+def editTimer(request, assignment_id, id):
+    context = {}
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    timer = assignment.timers.filter(id=id).first()
+
+    form = TimerForm(request.POST or None, instance=timer)
+    if form.is_valid():
+        updatedTimer = form.save(commit=False)
+        updatedTimer.edit()
+        return HttpResponseRedirect('/')
+
+    context['form'] = form
+    return render(request, 'editTimer.html', context)
+
+
 class timeManagement(ListView):
     template_name = 'timeManagement.html'
     context_object_name = 'assignment_list'
@@ -88,12 +105,14 @@ class timeManagement(ListView):
     def get_queryset(self):
         return Assignment.objects.order_by('due_date')
 
+
 class timeManagement2(ListView):
     template_name = 'timeManagement2.html'
     context_object_name = 'assignment_list'
 
     def get_queryset(self):
         return Assignment.objects.order_by('due_date')
+
 
 class averageManagement(ListView):
     template_name = 'averageManagement.html'

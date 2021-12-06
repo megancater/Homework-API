@@ -23,17 +23,18 @@
 		</div>
 		<div>
 			{% if assignment_list %}
-			<ol>
+			<ol style='font-size: 1.4em;'>
 				{% for assignment in assignment_list %}
-				<li>
+				<li style='margin-top: 16px'>
 					{{ assignment.name }}
-					<button class='btn btn-primary btn-sm'
+					<button class='btn btn-primary btn-sm py-0' style='font-size: 0.7em;'
 						onclick="location.href='{{assignment.id}}/update'">Edit</button>
-					<button class='btn btn-danger btn-sm'
+					<button class='btn btn-danger btn-sm py-0' style='font-size: 0.7em;'
 						onclick="location.href='{{assignment.id}}/delete'">Delete</button>
-					<button class='btn btn-success btn-sm'
+					<button class='btn btn-success btn-sm py-0' style='font-size: 0.7em;'
 						onclick="location.href='{{assignment.id}}/timer'">Timer</button>
-					<ul>
+
+					<ul style='font-size: 0.8em;'>
 						<li> Class: {{ assignment.class_name }}
 						<li> Description: {{ assignment.description }}
 						<li> Due Date: {{ assignment.due_date }}
@@ -41,9 +42,11 @@
 							{% if assignment.timers.all %}
 							<ul>
 								{% for timer in assignment.timers.all %}
-								<li> Timer {{ forloop.counter }}: {{ timer.begin}} - {{timer.end }}
-									<button class='btn btn-danger btn-sm py-0' style='font-size: 0.8em;'
-										onclick="location.href='{{assignment.id}}/timer/{{timer.id}}'">Delete</button>
+								<li><button class='btn btn-outline-primary btn-sm py-0' style='font-size: 0.7em;'
+										onclick="location.href='{{assignment.id}}/timer/edit/{{timer.id}}'">Edit</button>
+									<button class='btn btn-outline-danger btn-sm py-0' style='font-size: 0.7em;'
+										onclick="location.href='{{assignment.id}}/timer/delete/{{timer.id}}'">Delete</button>
+									Timer {{ forloop.counter }}: {{ timer.begin}} - {{timer.end }}
 									{% empty %}
 									{% endfor %}
 							</ul>

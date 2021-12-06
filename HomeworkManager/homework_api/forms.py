@@ -18,5 +18,6 @@ class TimerForm(forms.ModelForm):
     class Meta:
         model = Timer
         fields = [
-            'assignment',
+            'begin',
+            'end'
         ]
