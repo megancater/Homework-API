@@ -19,15 +19,17 @@
 
 		d3.json("{% url 'load-data' %}", function (rawData) {
 
-			var taskHeight = 50;
-			var taskWidth = 100;
-			var weekOffset = 25;
-			var monthOffset = 50;
-			var indent = 35;
-			var lineSpace = 85;
+			var width = window.innerWidth, height = 2 * window.innerHeight;
 
-			var classHeight = 50;
-			var classWidth = 400;
+			var taskHeight = 95;
+			var taskWidth = 2 * width / 8;
+			var weekOffset = 30;
+			var monthOffset = 60;
+			var indent = 35;
+			var lineSpace = 105;
+
+			var classHeight = 95;
+			var classWidth = 5 * width / 8;
 
 			var monthDict = {
 				0: 'January',
@@ -114,8 +116,6 @@
 				});
 			});
 
-			var width = window.innerWidth, height = 2 * window.innerHeight;
-
 
 			var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
 
@@ -136,6 +136,9 @@
 					.duration(750);
 
 				//JOIN
+				var pageTitle = svg.selectAll(".pageTitle")
+					.data(assign)
+
 				var title = svg.selectAll(".title")
 					.data(assign);
 
@@ -198,7 +201,7 @@
 				//UPDATE
 				title
 					.transition(t)
-					.text("Month: " + currentMonth + " Week: " + currentWeek);
+					.text("Month: " + currentMonth + " | Week: " + currentWeek);
 
 				taskNameText
 					.transition(t)
@@ -257,13 +260,27 @@
 					})
 
 				//ENTER
+				pageTitle.enter().append("text")
+					.attr("class", "pageTitle")
+					.attr("opacity", 1e-6)
+					.attr('x', width / 2)
+					.attr('y', 25)
+					//.attr('font-weight', "bold")
+					.text("Time Management Dashboard")
+					.style("text-anchor", "middle")
+					.style("font-size", "34px")
+					.transition(t)
+					.attr("opacity", 1);
+
 				title.enter().append("text")
 					.attr("class", "title")
 					.attr("opacity", 1e-6)
 					.attr('x', width / 2)
-					.attr('y', 25)
-					.attr('font-weight', "bold")
-					.text("Month: " + currentMonth + " Week: " + currentWeek)
+					.attr('y', 55)
+					//.attr('font-weight', "bold")
+					.text("Month: " + currentMonth + " | Week: " + currentWeek)
+					.style("text-anchor", "middle")
+					.style("font-size", "22px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -273,6 +290,7 @@
 					.attr("x", function (d) { return taskWidth; })
 					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight; })
 					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+					.style("font-size", "22px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -290,6 +308,7 @@
 						}
 						return "Week: " + minutesSum.toFixed(0) + " minutes";
 					})
+					.style("font-size", "18px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -307,6 +326,7 @@
 						}
 						return "Month: " + minutesSum.toFixed(0) + " minutes";
 					})
+					.style("font-size", "18px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -316,6 +336,7 @@
 					.attr("x", function (d) { return classWidth; })
 					.attr("y", function (d) { return d.groupid * lineSpace + classHeight; })
 					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+					.style("font-size", "22px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -327,6 +348,7 @@
 					.text(function (d) {
 						return "Week: " + d.week[currentWeek].toFixed(0) + " minutes";
 					})
+					.style("font-size", "18px")
 					.transition(t)
 					.attr("opacity", 1);
 
@@ -338,11 +360,12 @@
 					.text(function (d) {
 						return "Month: " + d.month[currentMonth].toFixed(0) + " minutes";
 					})
+					.style("font-size", "18px")
 					.transition(t)
 					.attr("opacity", 1);
 
-
 			}
+
 
 			function updateData(data) {
 				var updatedData = data;
