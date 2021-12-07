@@ -145,6 +145,8 @@ def editTimer(request, assignment_id, id):
 def manageTime(request):
     return render(request, 'timeManagement2.html')
 
+def manageAverage(request):
+    return render(request, 'averageManagement2.html')
 
 def loadData(request):
     data = Assignment.objects.all()
@@ -163,26 +165,3 @@ def loadData(request):
 
     return JsonResponse(processedData, safe=False)
 
-
-class timeManagement(ListView):
-    template_name = 'timeManagement.html'
-    context_object_name = 'assignment_list'
-
-    def get_queryset(self):
-        return Assignment.objects.order_by('due_date')
-
-
-class timeManagement2(ListView):
-    template_name = 'timeManagement2.html'
-    context_object_name = 'assignment_list'
-
-    def get_queryset(self):
-        return Assignment.objects.order_by('due_date')
-
-
-class averageManagement(ListView):
-    template_name = 'averageManagement.html'
-    context_object_name = 'assignment_list'
-
-    def get_queryset(self):
-        return Assignment.objects.order_by('due_date')

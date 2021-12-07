@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Time Management Dashboard</title>
+	<title>Average Time Management Dashboard</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 	<script src="https://d3js.org/d3.v4.min.js"></script>
@@ -19,6 +19,7 @@
 
 		d3.json("{% url 'load-data' %}", function (rawData) {
 
+			// set style
 			var taskHeight = 50;
 			var taskWidth = 100;
 			var weekOffset = 25;
@@ -44,7 +45,6 @@
 				11: 'December'
 			};
 
-
 			var January = 'January';
 			var February = 'February';
 			var March = 'March';
@@ -58,6 +58,7 @@
 			var November = 'November';
 			var December = 'December';
 
+			// initialize variables
 			todaysdate = new Date();
 			var firstJan = new Date(todaysdate.getFullYear(), 0, 1);
 			var numDays = Math.floor((todaysdate - firstJan) / (24 * 60 * 60 * 1000));
@@ -72,6 +73,7 @@
 			var weeks = [];
 			var class_name_data = [];
 
+			// parse raw data
 			rawData.forEach(function (d) {
 				let class_name_values = class_name_data.map(({ name }) => name);
 				if (!class_name_values.includes(d.class_name)) {
@@ -212,12 +214,17 @@
 					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + weekOffset; })
 					.text(function (d) {
 						var minutesSum = 0;
+						var countTimer = 0;
 						for (let i = 0; i < d.timers.length; i++) {
 							if (d.timers[i].week == currentWeek) {
 								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+								countTimer++;
 							}
 						}
-						return "Week: " + minutesSum.toFixed(0) + " minutes";
+						if (countTimer == 0) {
+							countTimer = 1;
+						}
+						return "Week: " + (minutesSum / countTimer).toFixed(2) + " minutes average";
 					})
 
 				taskMonthText
@@ -226,12 +233,17 @@
 					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + monthOffset; })
 					.text(function (d) {
 						var minutesSum = 0;
+						var countTimer = 0;
 						for (let i = 0; i < d.timers.length; i++) {
 							if (monthDict[d.timers[i].month] == currentMonth) {
 								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+								countTimer++;
 							}
 						}
-						return "Month: " + minutesSum.toFixed(0) + " minutes";
+						if (countTimer == 0) {
+							countTimer = 1;
+						}
+						return "Month: " + (minutesSum / countTimer).toFixed(2) + " minutes average";
 					})
 
 				classNameText
@@ -283,12 +295,17 @@
 					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + weekOffset; })
 					.text(function (d) {
 						var minutesSum = 0;
+						var countTimer = 0;
 						for (let i = 0; i < d.timers.length; i++) {
 							if (d.timers[i].week == currentWeek) {
 								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+								countTimer++;
 							}
 						}
-						return "Week: " + minutesSum.toFixed(0) + " minutes";
+						if (countTimer == 0) {
+							countTimer = 1;
+						}
+						return "Week: " + (minutesSum / countTimer).toFixed(2) + " minutes average";
 					})
 					.transition(t)
 					.attr("opacity", 1);
@@ -300,47 +317,20 @@
 					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + monthOffset; })
 					.text(function (d) {
 						var minutesSum = 0;
+						var countTimer = 0;
 						for (let i = 0; i < d.timers.length; i++) {
 							if (monthDict[d.timers[i].month] == currentMonth) {
 								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+								countTimer++;
 							}
 						}
-						return "Month: " + minutesSum.toFixed(0) + " minutes";
+						if (countTimer == 0) {
+							countTimer = 1;
+						}
+						return "Month: " + (minutesSum / countTimer).toFixed(2) + " minutes average";
 					})
 					.transition(t)
 					.attr("opacity", 1);
-
-				classNameText.enter().append("text")
-					.attr("class", "className")
-					.attr("opacity", 1e-6)
-					.attr("x", function (d) { return classWidth; })
-					.attr("y", function (d) { return d.groupid * lineSpace + classHeight; })
-					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
-					.transition(t)
-					.attr("opacity", 1);
-
-				classWeekText.enter().append("text")
-					.attr("class", "classWeek")
-					.attr("opacity", 1e-6)
-					.attr("x", function (d) { return classWidth + indent; })
-					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + weekOffset; })
-					.text(function (d) {
-						return "Week: " + d.week[currentWeek].toFixed(0) + " minutes";
-					})
-					.transition(t)
-					.attr("opacity", 1);
-
-				classMonthText.enter().append("text")
-					.attr("class", "classMonth")
-					.attr("opacity", 1e-6)
-					.attr("x", function (d) { return classWidth + indent; })
-					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + monthOffset; })
-					.text(function (d) {
-						return "Month: " + d.month[currentMonth].toFixed(0) + " minutes";
-					})
-					.transition(t)
-					.attr("opacity", 1);
-
 
 			}
 
