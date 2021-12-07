@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic import ListView, DetailView
 from django.db.models import Q, OuterRef, Subquery
 from .models import Assignment, Timer
 from .forms import AssignmentForm, TimerForm
+#import json
 
 
 class IndexView(ListView):
@@ -96,6 +97,28 @@ def editTimer(request, assignment_id, id):
 
     context['form'] = form
     return render(request, 'editTimer.html', context)
+
+
+def manageTime(request):
+    return render(request, 'timeManagement2.html')
+
+
+def loadData(request):
+    data = Assignment.objects.all()
+    processedData = list(Assignment.objects.values(
+        'name', 'due_date', 'class_name', 'description', 'completed'))
+
+    for i, assign in enumerate(data):
+        timersList = []
+        for timer in assign.timers.all():
+            timersList.append({
+                'id': timer.id,
+                'begin': timer.begin,
+                'end': timer.end
+            })
+        processedData[i]['timers'] = timersList
+
+    return JsonResponse(processedData, safe=False)
 
 
 class timeManagement(ListView):
