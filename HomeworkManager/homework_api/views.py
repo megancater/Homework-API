@@ -7,6 +7,8 @@ from .forms import AssignmentForm, TimerForm
 #import json
 
 # List of assignments
+
+
 class IndexView(ListView):
     template_name = 'homework_api/index.html'
     context_object_name = 'assignment_list'
@@ -15,17 +17,20 @@ class IndexView(ListView):
     def get_queryset(self):
         return Assignment.objects.order_by('due_date')
 
+
 class AssignmentDetailView(ListView):
     model = Assignment
     template_name = 'homework_api/index.html'
 
 # Updates assignment details
+
+
 def updateAssignment(request, id):
     context = {}
-    
+
     # Gets assignment
     obj = get_object_or_404(Assignment, id=id)
-    
+
     # Creates assignment form
     form = AssignmentForm(request.POST or None, instance=obj)
 
@@ -38,26 +43,30 @@ def updateAssignment(request, id):
     return render(request, 'updateAssignment.html', context)
 
 # Deletes assignment
+
+
 def deleteAssignment(request, id):
     context = {}
-    
+
     # Gets assignment
     assignment = get_object_or_404(Assignment, id=id)
-    
+
     # Deletes the assignment
     if request.method == 'POST':
         assignment.delete()
         return HttpResponseRedirect('/')
-    
+
     return render(request, 'deleteAssignment.html', context)
 
 # Creates a new assignment
+
+
 def createAssignment(request):
     context = {}
-    
+
     # Creates assignment form
     form = AssignmentForm(request.POST or None)
-    
+
     # Saves form data
     if form.is_valid():
         form.save()
@@ -67,9 +76,11 @@ def createAssignment(request):
     return render(request, 'createAssignment.html', context)
 
 # Creates timer with begin and end
+
+
 def timeAssignment(request, assignment_id):
     context = {}
-    
+
     # Gets assignment
     assignment = get_object_or_404(Assignment, id=assignment_id)
 
@@ -79,7 +90,7 @@ def timeAssignment(request, assignment_id):
             timer = Timer.objects.create(assignment=assignment)
             timer.save()
             return render(request, 'timeAssignment.html', context)
-        
+
         # Updates and saves timer with end time
         if 'stop_timer' in request.POST:
             timerList = assignment.timers.all()
@@ -90,9 +101,11 @@ def timeAssignment(request, assignment_id):
     return render(request, 'timeAssignment.html', context)
 
 # Deletes timer
+
+
 def deleteTimer(request, assignment_id, id):
     context = {}
-    
+
     # Gets assignment associated with timer
     assignment = get_object_or_404(Assignment, id=assignment_id)
 
@@ -105,18 +118,20 @@ def deleteTimer(request, assignment_id, id):
     return render(request, 'deleteTimer.html', context)
 
 # Updates timer details
+
+
 def editTimer(request, assignment_id, id):
     context = {}
-    
+
     # Gets assignment associated with timer
     assignment = get_object_or_404(Assignment, id=assignment_id)
-    
+
     # Gets timer
     timer = assignment.timers.filter(id=id).first()
 
     # Creates form for updating timer
     form = TimerForm(request.POST or None, instance=timer)
-    
+
     # Updates and saves timer details
     if form.is_valid():
         updatedTimer = form.save(commit=False)

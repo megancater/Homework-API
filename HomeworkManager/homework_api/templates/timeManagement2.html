@@ -13,21 +13,389 @@
 </head>
 
 <body>
+	<div id="month_dropdown"></div>
+	<div id="week_dropdown"></div>
 	<script type='text/javascript'>
 
-		const getJSON = async url => {
-			const response = await fetch(url);
-			return response.json(); // get JSON from the response 
-		}
+		d3.json("{% url 'load-data' %}", function (rawData) {
 
-		getJSON("{% url 'load-data' %}").then(data => console.log(data));
+			var taskHeight = 50;
+			var taskWidth = 100;
+			var weekOffset = 25;
+			var monthOffset = 50;
+			var indent = 35;
+			var lineSpace = 85;
+
+			var classHeight = 50;
+			var classWidth = 400;
+
+			var monthDict = {
+				0: 'January',
+				1: 'February',
+				2: 'March',
+				3: 'April',
+				4: 'May',
+				5: 'June',
+				6: 'July',
+				7: 'August',
+				8: 'September',
+				9: 'October',
+				10: 'November',
+				11: 'December'
+			};
+
+			todaysdate = new Date();
+			var firstJan = new Date(todaysdate.getFullYear(), 0, 1);
+			var numDays = Math.floor((todaysdate - firstJan) / (24 * 60 * 60 * 1000));
+
+			var todaysWeek = Math.ceil((todaysdate.getDay() + 1 + numDays) / 7);
+			var todaysMonth = monthDict[todaysdate.getMonth()];
+
+			var currentWeek = todaysWeek;
+			var currentMonth = todaysMonth;
+
+			var months = [];
+			var weeks = [];
+			var class_name_data = [];
+
+			rawData.forEach(function (d) {
+				let class_name_values = class_name_data.map(({ name }) => name);
+				if (!class_name_values.includes(d.class_name)) {
+					data = { 'name': d.class_name, 'week': [], 'month': [] };
+					class_name_data.push(data);
+				}
+
+				d.timers.forEach(function (t) {
+					t.beginDate = new Date(t['begin']);
+					t.endDate = new Date(t['end']);
+
+					t.month = t.beginDate.getMonth();
+					if (!months.includes(monthDict[t.month]))
+						months.push(monthDict[t.month]);
+
+					var oneJan = new Date(t.beginDate.getFullYear(), 0, 1);
+					var numberOfDays = Math.floor((t.beginDate - oneJan) / (24 * 60 * 60 * 1000));
+
+					t.week = Math.ceil((t.beginDate.getDay() + 1 + numberOfDays) / 7);
+					if (!weeks.includes(t.week))
+						weeks.push(t.week);
+				});
+			});
+
+			console.log(weeks);
+
+			class_name_data.forEach(function (c) {
+				weeks.forEach(function (w) {
+					c.week[w] = 0;
+				});
+				months.forEach(function (m) {
+					c.month[m] = 0;
+				});
+
+				rawData.forEach(function (d) {
+					if (d.class_name == c.name) {
+						d.timers.forEach(function (t) {
+							c.week[t.week] += (t.endDate - t.beginDate) / (60 * 1000);
+							c.month[monthDict[t.month]] += (t.endDate - t.beginDate) / (60 * 1000);
+						});
+					}
+				});
+			});
+
+			console.log(class_name_data);
+
+			var width = window.innerWidth, height = 2 * window.innerHeight;
 
 
-		//d3.json("{% url 'load-data' %}", function (data) {
-		//	console.log(data);
-		//});
-		//var data = {{ formattedData| safe}};
-		//console.log(data);
+			var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
+
+			//redraw(filteredData());
+			redraw(updateData(rawData), updateData(class_name_data));
+
+			function redraw(assign, classes) {
+				Object.keys(assign).forEach(function (k) {
+					assign[k].groupid = k;
+				});
+
+				Object.keys(classes).forEach(function (k) {
+					classes[k].groupid = k;
+				});
+
+				// transition
+				var t = d3.transition()
+					.duration(750);
+
+				//JOIN
+				var title = svg.selectAll(".title")
+					.data(assign);
+
+				var taskNameText = svg.selectAll(".tasksName")
+					.data(assign);
+
+				var taskWeekText = svg.selectAll(".tasksWeek")
+					.data(assign);
+
+				var taskMonthText = svg.selectAll(".tasksMonth")
+					.data(assign);
+
+				var classNameText = svg.selectAll(".className")
+					.data(classes);
+
+				var classWeekText = svg.selectAll(".classWeek")
+					.data(classes);
+
+				var classMonthText = svg.selectAll(".classMonth")
+					.data(classes);
+
+
+				//EXIT
+				title.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				taskNameText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				taskWeekText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				taskMonthText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				classNameText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				classWeekText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+				classMonthText.exit()
+					.transition(t)
+					.attr("opacity", 1e-6)
+					.remove();
+
+
+				//UPDATE
+				title
+					.transition(t)
+					.text("Month: " + currentMonth + " Week: " + currentWeek);
+
+				taskNameText
+					.transition(t)
+					.attr("x", function (d) { return taskWidth; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight; })
+					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+
+				taskWeekText
+					.transition(t)
+					.attr("x", function (d) { return taskWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + weekOffset; })
+					.text(function (d) {
+						var minutesSum = 0;
+						for (let i = 0; i < d.timers.length; i++) {
+							if (d.timers[i].week == currentWeek) {
+								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+							}
+						}
+						return "Week: " + minutesSum.toFixed(0) + " minutes (" + (minutesSum / d.timers.length).toFixed(2) + " avg.)";
+					})
+
+				taskMonthText
+					.transition(t)
+					.attr("x", function (d) { return taskWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + monthOffset; })
+					.text(function (d) {
+						var minutesSum = 0;
+						for (let i = 0; i < d.timers.length; i++) {
+							if (d.timers[i].month == currentMonth) {
+								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+							}
+						}
+						return "Month: " + minutesSum.toFixed(0) + " minutes (" + (minutesSum / d.timers.length).toFixed(2) + " avg.)";
+					})
+
+				classNameText
+					.transition(t)
+					.attr("x", function (d) { return classWidth; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight; })
+					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+
+				classWeekText
+					.transition(t)
+					.attr("x", function (d) { return classWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + weekOffset; })
+					.text(function (d) {
+						return "Week: " + d.week[currentWeek].toFixed(0) + " minutes";
+					})
+
+				classMonthText
+					.transition(t)
+					.attr("x", function (d) { return classWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + monthOffset; })
+					.text(function (d) {
+						return "Month: " + d.month[currentMonth].toFixed(0) + " minutes";
+					})
+
+				//ENTER
+				title.enter().append("text")
+					.attr("class", "title")
+					.attr("opacity", 1e-6)
+					.attr('x', width / 2)
+					.attr('y', 25)
+					.attr('font-weight', "bold")
+					.text("Month: " + currentMonth + " Week: " + currentWeek)
+					.transition(t)
+					.attr("opacity", 1);
+
+				taskNameText.enter().append("text")
+					.attr("class", "tasksName")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return taskWidth; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight; })
+					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+					.transition(t)
+					.attr("opacity", 1);
+
+				taskWeekText.enter().append("text")
+					.attr("class", "tasksWeek")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return taskWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + weekOffset; })
+					.text(function (d) {
+						var minutesSum = 0;
+						for (let i = 0; i < d.timers.length; i++) {
+							if (d.timers[i].week == currentWeek) {
+								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+							}
+						}
+						return "Week: " + minutesSum.toFixed(0) + " minutes (" + (minutesSum / d.timers.length).toFixed(2) + " avg.)";
+					})
+					.transition(t)
+					.attr("opacity", 1);
+
+				taskMonthText.enter().append("text")
+					.attr("class", "tasksMonth")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return taskWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + taskHeight + monthOffset; })
+					.text(function (d) {
+						var minutesSum = 0;
+						for (let i = 0; i < d.timers.length; i++) {
+							if (d.timers[i].month == currentMonth) {
+								minutesSum += (d.timers[i].endDate - d.timers[i].beginDate) / (60 * 1000);
+							}
+						}
+						return "Month: " + minutesSum.toFixed(0) + " minutes (" + (minutesSum / d.timers.length).toFixed(2) + " avg.)";
+					})
+					.transition(t)
+					.attr("opacity", 1);
+
+				classNameText.enter().append("text")
+					.attr("class", "className")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return classWidth; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight; })
+					.text(function (d) { var position = parseInt(d.groupid) + 1; return position + ". " + d.name })
+					.transition(t)
+					.attr("opacity", 1);
+
+				classWeekText.enter().append("text")
+					.attr("class", "classWeek")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return classWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + weekOffset; })
+					.text(function (d) {
+						return "Week: " + d.week[currentWeek].toFixed(0) + " minutes";
+					})
+					.transition(t)
+					.attr("opacity", 1);
+
+				classMonthText.enter().append("text")
+					.attr("class", "classMonth")
+					.attr("opacity", 1e-6)
+					.attr("x", function (d) { return classWidth + indent; })
+					.attr("y", function (d) { return d.groupid * lineSpace + classHeight + monthOffset; })
+					.text(function (d) {
+						return "Month: " + d.month[currentMonth].toFixed(0) + " minutes";
+					})
+					.transition(t)
+					.attr("opacity", 1);
+
+
+			}
+
+			function updateData(data) {
+				var updatedData = data;
+				updatedData.forEach(function (d) {
+					d.currentMonth = currentMonth;
+					d.currentWeek = currentWeek;
+				});
+				return updatedData;
+			}
+
+			var monthDropDown = d3.select("#month_dropdown")
+				.append("select")
+				.attr("class", "selection")
+				.attr("name", "months")
+
+				.on('change', function () {
+					currentMonth = eval(d3.select(this).property('value'));
+					redraw(updateData(rawData), updateData(class_name_data));
+				});
+
+			var monthOptions = monthDropDown.selectAll("option")
+				.data(months)
+				.enter()
+				.append("option");
+
+			monthOptions.text(function (d) {
+				return d;
+			})
+				.attr("value", function (d) {
+					return d;
+				})
+				.property("selected", function (d) {
+					return d === todaysMonth;
+				});
+
+			var weekDropDown = d3.select("#week_dropdown")
+				.append("select")
+				.attr("class", "selection")
+				.attr("name", "weeks")
+
+				.on('change', function () {
+					currentWeek = eval(d3.select(this).property('value'));
+					redraw(updateData(rawData), updateData(class_name_data));
+				});
+
+			var weekOptions = weekDropDown.selectAll("option")
+				.data(weeks)
+				.enter()
+				.append("option");
+
+			weekOptions.text(function (d) {
+				return d;
+			})
+				.attr("value", function (d) {
+					return d;
+				})
+				.property("selected", function (d) {
+					return d === todaysWeek
+				});
+
+
+		});
+
 	</script>
 </body>
 
