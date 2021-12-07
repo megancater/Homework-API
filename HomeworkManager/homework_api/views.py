@@ -4,11 +4,8 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Q, OuterRef, Subquery
 from .models import Assignment, Timer
 from .forms import AssignmentForm, TimerForm
-#import json
 
 # List of assignments
-
-
 class IndexView(ListView):
     template_name = 'homework_api/index.html'
     context_object_name = 'assignment_list'
@@ -17,14 +14,12 @@ class IndexView(ListView):
     def get_queryset(self):
         return Assignment.objects.order_by('due_date')
 
-
+# During execution, contains the current assignment being operated on
 class AssignmentDetailView(ListView):
     model = Assignment
     template_name = 'homework_api/index.html'
 
 # Updates assignment details
-
-
 def updateAssignment(request, id):
     context = {}
 
@@ -43,8 +38,6 @@ def updateAssignment(request, id):
     return render(request, 'updateAssignment.html', context)
 
 # Deletes assignment
-
-
 def deleteAssignment(request, id):
     context = {}
 
@@ -59,8 +52,6 @@ def deleteAssignment(request, id):
     return render(request, 'deleteAssignment.html', context)
 
 # Creates a new assignment
-
-
 def createAssignment(request):
     context = {}
 
@@ -76,8 +67,6 @@ def createAssignment(request):
     return render(request, 'createAssignment.html', context)
 
 # Creates timer with begin and end
-
-
 def timeAssignment(request, assignment_id):
     context = {}
 
@@ -101,8 +90,6 @@ def timeAssignment(request, assignment_id):
     return render(request, 'timeAssignment.html', context)
 
 # Deletes timer
-
-
 def deleteTimer(request, assignment_id, id):
     context = {}
 
@@ -118,8 +105,6 @@ def deleteTimer(request, assignment_id, id):
     return render(request, 'deleteTimer.html', context)
 
 # Updates timer details
-
-
 def editTimer(request, assignment_id, id):
     context = {}
 
@@ -141,26 +126,34 @@ def editTimer(request, assignment_id, id):
     context['form'] = form
     return render(request, 'editTimer.html', context)
 
-
+# Time management requests
 def manageTime(request):
     return render(request, 'timeManagement2.html')
 
+# Average time management requests
 def manageAverage(request):
     return render(request, 'averageManagement2.html')
 
+# Loads assignment and timer data
 def loadData(request):
+    # Gets all assignments and processes as list
     data = Assignment.objects.all()
     processedData = list(Assignment.objects.values(
         'name', 'due_date', 'class_name', 'description', 'completed'))
 
+    # For each assignment creates a list of associated timers
     for i, assign in enumerate(data):
         timersList = []
+
+        # Adds timer data as dictionary to list
         for timer in assign.timers.all():
             timersList.append({
                 'id': timer.id,
                 'begin': timer.begin,
                 'end': timer.end
             })
+
+        # Adds timer list to assignment
         processedData[i]['timers'] = timersList
 
     return JsonResponse(processedData, safe=False)

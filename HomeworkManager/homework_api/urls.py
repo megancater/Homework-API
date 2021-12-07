@@ -4,10 +4,8 @@ from .views import deleteAssignment, createAssignment, updateAssignment, timeAss
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    #path('timemanagement', views.timeManagement.as_view(), name='timeManagement'),
-    #path('timemanagement', manageTime),  # loadData),
-    re_path(r'^timemanagement?', manageTime),  # loadData),
-    re_path(r'^averagemanagement?', manageAverage),  # loadData),
+    re_path(r'^timemanagement?', manageTime),
+    re_path(r'^averagemanagement?', manageAverage),
     path('loaddata', loadData, name='load-data'),
     path('<id>/delete', deleteAssignment),
     path('<id>/update', updateAssignment),

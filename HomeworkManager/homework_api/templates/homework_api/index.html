@@ -16,11 +16,14 @@
 	</div>
 	<div class='container'>
 		<div class='text-center'>
+			<!-- Options to add a new assignment or go to time or average dashboard -->
 			<button class='btn btn-info' onclick="location.href='/create'">Add Assignment</button>
 			<button class='btn btn-info' onclick="location.href='/timemanagement'">Time Dashboard</button>
 			<button class='btn btn-info' onclick="location.href='/averagemanagement'">Average Dashboard</button>
 			<br></br>
 		</div>
+
+		<!-- Lists each assignment, its details, and options to edit, delete, add timer, and edit or delete timers -->
 		<div>
 			{% if assignment_list %}
 			<ol style='font-size: 1.4em;'>

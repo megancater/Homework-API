@@ -18,10 +18,11 @@
 	<div id="week_dropdown"></div>
 	<script type='text/javascript'>
 
+        // Filters data based on default or given week and month
 		d3.json("{% url 'load-data' %}", function (rawData) {
-
 			var width = window.innerWidth, height = 2 * window.innerHeight;
 
+            // sets style
 			var taskHeight = 95;
 			var taskWidth = 2 * width / 8;
 			var weekOffset = 30;
@@ -32,6 +33,7 @@
 			var classHeight = 95;
 			var classWidth = 5 * width / 8;
 
+            // Dictionary of month names
 			var monthDict = {
 				0: 'January',
 				1: 'February',
@@ -48,6 +50,7 @@
 			};
 
 
+            // Variables for each month
 			var January = 'January';
 			var February = 'February';
 			var March = 'March';
@@ -61,6 +64,8 @@
 			var November = 'November';
 			var December = 'December';
 
+            // Gets date and calculates days since January 1st
+            // initialize variables
 			todaysdate = new Date();
 			var firstJan = new Date(todaysdate.getFullYear(), 0, 1);
 			var numDays = Math.floor((todaysdate - firstJan) / (24 * 60 * 60 * 1000));
@@ -75,6 +80,8 @@
 			var weeks = [];
 			var class_name_data = [];
 
+            // Calculates total time between begin and end of timer
+            // Parses raw data
 			rawData.forEach(function (d) {
 				let class_name_values = class_name_data.map(({ name }) => name);
 				if (!class_name_values.includes(d.class_name)) {
@@ -99,6 +106,7 @@
 				});
 			});
 
+            // Adds up total time per assignment
 			class_name_data.forEach(function (c) {
 				weeks.forEach(function (w) {
 					c.week[w] = 0;
@@ -120,6 +128,7 @@
 
 			var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
 
+            // Sets color for each month
 			var fillColor = {
 				'January': "#D98880",
 				'February': "#ABEBC6",
@@ -135,12 +144,13 @@
 				'December': "#16A085"
 			};
 
+            // Sets color for each week
 			var weekColor = d3.scaleSequential().domain([1, 52])
 				.interpolator(d3.interpolateViridis);
 
-			//redraw(filteredData());
 			redraw(updateData(rawData), updateData(class_name_data));
 
+            // Redraws screen
 			function redraw(assign, classes) {
 				Object.keys(assign).forEach(function (k) {
 					assign[k].groupid = k;
@@ -348,7 +358,6 @@
 					.attr("opacity", 1e-6)
 					.attr('x', width / 2)
 					.attr('y', 25)
-					//.attr('font-weight', "bold")
 					.text("Time Management Dashboard")
 					.style("text-anchor", "middle")
 					.style("font-size", "34px")
@@ -360,7 +369,6 @@
 					.attr("opacity", 1e-6)
 					.attr('x', width / 2)
 					.attr('y', 55)
-					//.attr('font-weight', "bold")
 					.text("Month: " + currentMonth + " | Week: " + currentWeek)
 					.style("text-anchor", "middle")
 					.style("font-size", "22px")
@@ -397,6 +405,7 @@
 					.transition(t)
 					.attr("opacity", 1);
 
+                // Sums minutes per task and displays for given week
 				taskWeekText.enter().append("text")
 					.attr("class", "tasksWeek")
 					.attr("opacity", 1e-6)
@@ -415,6 +424,7 @@
 					.transition(t)
 					.attr("opacity", 1);
 
+                // Sums minutes per task and displays for given month
 				taskMonthText.enter().append("text")
 					.attr("class", "tasksMonth")
 					.attr("opacity", 1e-6)
@@ -489,7 +499,7 @@
 
 			}
 
-
+            // Updates month and week to current
 			function updateData(data) {
 				var updatedData = data;
 				updatedData.forEach(function (d) {
@@ -499,6 +509,7 @@
 				return updatedData;
 			}
 
+            // Creates drop down for month selection
 			var monthDropDown = d3.select("#month_dropdown")
 				.append("select")
 				.attr("class", "selection")
@@ -509,6 +520,7 @@
 					redraw(updateData(rawData), updateData(class_name_data));
 				});
 
+            // Determines month options based on months in data
 			var monthOptions = monthDropDown.selectAll("option")
 				.data(months)
 				.enter()
@@ -524,6 +536,7 @@
 					return d === todaysMonth;
 				});
 
+            // Creates drop down for week selection
 			var weekDropDown = d3.select("#week_dropdown")
 				.append("select")
 				.attr("class", "selection")
@@ -534,6 +547,7 @@
 					redraw(updateData(rawData), updateData(class_name_data));
 				});
 
+            // Determines week options based on weeks in data
 			var weekOptions = weekDropDown.selectAll("option")
 				.data(weeks)
 				.enter()
