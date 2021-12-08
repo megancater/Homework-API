@@ -6,5 +6,6 @@ How to set up and run project
 2. Go to the folder HomeworkManager
 	$ cd HomeworkManager
    then run
-	$ python3 manage.py runserver
+	$ python manage.py runserver
    to begin the web application running.
+3. Go to 127.0.0.1:8000 or localhost:8000 on any browser to use the web application.
